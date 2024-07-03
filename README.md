@@ -20,7 +20,7 @@ git clone https://github.com/medtty/CodeAlpha_Network_Sniffer.git
 Navigate to the repository directory and run the network sniffer script with root permissions:
 
 ```bash
-sudo python network_sniffer.py
+sudo python Network-Sniffer.py
 ```
 
 3. Analysis Details:
