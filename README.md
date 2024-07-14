@@ -2,6 +2,16 @@
 
 This repository contains a Python-based network sniffer that captures and analyzes network traffic. It extracts and displays anonymized information about each packet, including the protocol, source IP, destination IP, source port, and destination port.
 
+## Features
+- Captures TCP and UDP packets.
+- Logs source and destination IP addresses.
+- Option to hash IP addresses for privacy.
+
+## Requirements
+- Python 3.x
+- Scapy
+- Root privileges (use sudo to run)
+
 ## Installation
 To use the network sniffer, install the required library using pip:
 
@@ -20,7 +30,14 @@ git clone https://github.com/medtty/CodeAlpha_Network_Sniffer.git
 Navigate to the repository directory and run the network sniffer script with root permissions:
 
 ```bash
-sudo python Network-Sniffer.py
+sudo python nsnif.py
+```
+
+## Using Hashed IP Addresses
+To enable IP address hashing, run the script with the --hash option:
+
+```bash
+sudo python3 nsnif.py --hash
 ```
 
 3. Analysis Details:
@@ -55,44 +72,34 @@ if IP in packet:
         packet_data["Destination Port"] = udp_layer.dport
 ```
 
-## Output
+## Example Output
+When the script is running, you will see logs similar to the following:
+
+### Normal Mode Output
 
 ```bash
 Starting network sniffer...
 
-1. New Packet:
-    --------------------
-    Source IP: c3f32a4b
-    Destination IP: d728cb51
-    Protocol: TCP
-    Source Port: 12345
-    Destination Port: 80
-    --------------------
-
-2. New Packet:
-    --------------------
-    Source IP: abfd13c7
-    Destination IP: e8e3c9a0
-    Protocol: UDP
-    Source Port: 54321
-    Destination Port: 53
-    --------------------
+2024-07-14 12:26:16,178 - INFO - Scapy - Protocol: TCP Source: 192.168.1.10 Destination: 192.168.1.20
+.
+.
+.
 ```
 
-### Here i used hash for anonymization
-```python
-import hashlib
+### Hashed Mode Output
 
-def anonymize_ip(ip):
-    return hashlib.sha256(ip.encode()).hexdigest()[:8]  # Use a hash for anonymization
+```bash
+Starting network sniffer...
 
-
-# it can be used like this
-if IP in packet:
-    ip_layer = packet[IP]
-    packet_data["Source IP"] = anonymize_ip(ip_layer.src)
-    packet_data["Destination IP"] = anonymize_ip(ip_layer.dst)
+2024-07-14 12:26:16,178 - INFO - Scapy - Protocol: TCP Source: a1b2c3d4 Destination: e5f6g7h8
+.
+.
+.
 ```
+
+## Stopping the Sniffer
+You can stop the sniffer at any time by pressing Ctrl + C. The script will gracefully terminate and log that it has stopped.
+
 
 ## Contributing
 Contributions are welcome! If you have any suggestions or improvements, please create a pull request or open an issue.
