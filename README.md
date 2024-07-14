@@ -52,24 +52,28 @@ The network sniffer script captures and analyzes network packets in real-time. I
 The script utilizes the Scapy library to handle packet sniffing and parsing.
 
 
-
 ```Python
-if IP in packet:
-    ip_layer = packet[IP]
-    packet_data["Source IP"] = ip_layer.src
-    packet_data["Destination IP"] = ip_layer.dst
+def main():
+    global stop_event
+    stop_event = threading.Event()
+    args = parse_arguments()
 
-    if TCP in packet:
-        tcp_layer = packet[TCP]
-        packet_data["Protocol"] = "TCP"
-        packet_data["Source Port"] = tcp_layer.sport
-        packet_data["Destination Port"] = tcp_layer.dport
+    scapy_thread = threading.Thread(target=run_scapy_sniffer, args=(stop_event, args.hash))
+    scapy_thread.daemon = True
+    scapy_thread.start()
 
-    elif UDP in packet:
-        udp_layer = packet[UDP]
-        packet_data["Protocol"] = "UDP"
-        packet_data["Source Port"] = udp_layer.sport
-        packet_data["Destination Port"] = udp_layer.dport
+    signal.signal(signal.SIGINT, signal_handler)
+
+    try:
+        while not stop_event.is_set():
+            time.sleep(0.1)
+    except KeyboardInterrupt:
+        logger.info("Received KeyboardInterrupt. Stopping threads...")
+        stop_event.set()
+    finally:
+        scapy_thread.join(timeout=5)  # Wait up to 5 seconds for the thread to finish
+        logger.info("All threads stopped. Exiting program.")
+        sys.exit(0)
 ```
 
 ## Example Output
